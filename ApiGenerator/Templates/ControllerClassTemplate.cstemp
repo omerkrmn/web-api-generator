@@ -1,0 +1,65 @@
+using Microsoft.AspNetCore.Mvc;
+using ##PROJECT_NAME##.Domain.Repositories;
+using ##PROJECT_NAME##.Domain.Entities;
+
+namespace ##PROJECT_NAME##.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ##ENTITY_NAME##sController : ControllerBase
+    {
+        private readonly IRepositoryManager _repositoryManager;
+
+        public ##ENTITY_NAME##sController(IRepositoryManager repositoryManager)
+        {
+            _repositoryManager = repositoryManager;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var list = await _repositoryManager.##ENTITY_NAME##.GetAllAsync();
+            return Ok(list);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var entity = await _repositoryManager.##ENTITY_NAME##.GetByIdAsync(id);
+            if (entity == null) return NotFound();
+            return Ok(entity);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(##ENTITY_NAME## entity)
+        {
+            await _repositoryManager.##ENTITY_NAME##.AddAsync(entity);
+            await _repositoryManager.SaveAsync();
+            
+            return CreatedAtAction(nameof(GetById), new { id = entity.Id }, entity);
+        }
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, ##ENTITY_NAME## entity)
+        {
+            if (id != entity.Id) return BadRequest();
+            
+            _repositoryManager.##ENTITY_NAME##.Update(entity); 
+            await _repositoryManager.SaveAsync(); 
+            
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var entity = await _repositoryManager.##ENTITY_NAME##.GetByIdAsync(id);
+            if (entity == null) return NotFound();
+            
+            _repositoryManager.##ENTITY_NAME##.Delete(entity);
+            await _repositoryManager.SaveAsync();
+            
+            return NoContent();
+        }
+    }
+}

@@ -1,0 +1,12 @@
+using System;
+using ##PROJECT_NAME##.Domain.Common;
+
+namespace ##PROJECT_NAME##.Domain.Entities
+{
+    public class ##ENTITY_NAME## : BaseEntity
+    {
+##PROPERTIES##
+        // Ýliþkili koleksiyonlar buraya eklenebilir.
+        // public List<##RELATED_ENTITY##> ##RELATED_ENTITY##s { get; set; }
+    }
+}

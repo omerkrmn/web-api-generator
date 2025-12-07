@@ -1,0 +1,1 @@
+private readonly Lazy<I##ENTITY_NAME##Repository> _##ENTITY_NAME_LOWER##Repository;

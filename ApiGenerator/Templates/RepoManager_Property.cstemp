@@ -1,0 +1,1 @@
+public I##ENTITY_NAME##Repository ##ENTITY_NAME## => _##ENTITY_NAME_LOWER##Repository.Value;

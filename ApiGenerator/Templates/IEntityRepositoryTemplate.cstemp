@@ -1,0 +1,10 @@
+using ##PROJECT_NAME##.Domain.Entities;
+
+namespace ##PROJECT_NAME##.Domain.Repositories
+{
+    // Tüm temel metotlarý IGenericRepository'den miras alýr.
+    public interface I##ENTITY_NAME##Repository : IGenericRepository<##ENTITY_NAME##>
+    {
+        // Entity'ye özgü metotlar buraya gelir.
+    }
+}

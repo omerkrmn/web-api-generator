@@ -1,0 +1,1 @@
+_##ENTITY_NAME_LOWER##Repository = new Lazy<I##ENTITY_NAME##Repository>(() => new ##ENTITY_NAME##Repository(_context));

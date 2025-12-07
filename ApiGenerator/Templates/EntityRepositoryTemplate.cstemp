@@ -1,0 +1,16 @@
+using ##PROJECT_NAME##.Domain.Entities;
+using ##PROJECT_NAME##.Domain.Repositories;
+using ##PROJECT_NAME##.Infrastructure.Context;
+
+namespace ##PROJECT_NAME##.Infrastructure.Repositories
+{
+    // GenericRepository'yi miras alýr ve I##ENTITY_NAME##Repository arayüzünü uygular.
+    public class ##ENTITY_NAME##Repository : GenericRepository<##ENTITY_NAME##>, I##ENTITY_NAME##Repository
+    {
+        public ##ENTITY_NAME##Repository(AppDbContext context) : base(context)
+        {
+        }
+        
+        // Entity'ye özgü metot implementasyonlarý buraya gelir.
+    }
+}

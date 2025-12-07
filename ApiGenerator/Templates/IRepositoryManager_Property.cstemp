@@ -1,0 +1,1 @@
+I##ENTITY_NAME##Repository ##ENTITY_NAME## { get; }
