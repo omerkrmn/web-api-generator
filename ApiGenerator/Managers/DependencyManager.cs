@@ -35,15 +35,13 @@ public class DependencyManager
 
     public void AddLibrary(string projectPath, string libraryName, string version = "")
     {
-        // dotnet add <PROJE_YOLU> package <PAKET_ADI> --version <VERSİYON>
         string versionArg = string.IsNullOrEmpty(version) ? "" : $"--version \"{version}\"";
         string arguments = $@"add ""{projectPath}"" package ""{libraryName}"" {versionArg}";
         RunDotNetCommand(arguments);
     }
-
+    // burayı boşver sueda
     public void AddProjectReference(string sourceProjectPath, string targetProjectPath)
     {
-        // dotnet add <KAYNAK_PROJE_YOLU> reference <HEDEF_PROJE_YOLU>
         string arguments = $@"add ""{sourceProjectPath}"" reference ""{targetProjectPath}""";
         RunDotNetCommand(arguments);
     }

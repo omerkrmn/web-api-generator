@@ -7,7 +7,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Drawing;
-using ApiGenerator.Constants; // Point ve Size için gerekli
+using ApiGenerator.Constants; 
 
 namespace ApiGenerator;
 
@@ -162,33 +162,27 @@ public partial class Form1 : Form
                 _dependencyManager.AddProjectReference(apiCsproj, domainCsproj);
             }
 
-            // Adım 2: Entity'ye Özgü Dosyaları Üretme ve Ekleme
-
-            // a. Entity Sınıfı (Domain)
+        
             string entityCode = ProcessTemplate("EntityClassTemplate.cstemp", entityName, projectNamePrefix);
             string entityFilePath = Path.Combine(domainPath, "Entities", entityName + ".cs");
             Directory.CreateDirectory(Path.GetDirectoryName(entityFilePath));
             File.WriteAllText(entityFilePath, entityCode);
 
-            // b. IRepository Arayüzü (Domain)
             string iRepoCode = ProcessTemplate("IEntityRepositoryTemplate.cstemp", entityName, projectNamePrefix);
             string iRepoFilePath = Path.Combine(domainPath, "Repositories", "I" + entityName + "Repository.cs");
             Directory.CreateDirectory(Path.GetDirectoryName(iRepoFilePath));
             File.WriteAllText(iRepoFilePath, iRepoCode);
 
-            // c. Repository Implementasyonu (Infrastructure)
             string repoCode = ProcessTemplate("EntityRepositoryTemplate.cstemp", entityName, projectNamePrefix);
             string repoFilePath = Path.Combine(infrastructurePath, "Repositories", entityName + "Repository.cs");
             Directory.CreateDirectory(Path.GetDirectoryName(repoFilePath));
             File.WriteAllText(repoFilePath, repoCode);
 
-            // d. Controller Sınıfı (API)
             string controllerCode = ProcessTemplate("ControllerClassTemplate.cstemp", entityName, projectNamePrefix);
             string controllerFilePath = Path.Combine(apiPath, "Controllers", entityName + "sController.cs");
             Directory.CreateDirectory(Path.GetDirectoryName(controllerFilePath));
             File.WriteAllText(controllerFilePath, controllerCode);
 
-            // Adım 3: Mevcut Dosyaları Güncelleme (Unit of Work Entegrasyonu)
 
             string dbSetLine = $"        public DbSet<{entityName}> {entityName}s {{ get; set; }}";
             string iRepoManagerProp = _templateProcessor.ProcessTemplate("IRepositoryManager_Property.cstemp", entityName, projectNamePrefix);
@@ -196,18 +190,14 @@ public partial class Form1 : Form
             string repoManagerCtor = _templateProcessor.ProcessTemplate("RepoManager_Ctor_Assignment.cstemp", entityName, projectNamePrefix);
             string repoManagerProp = _templateProcessor.ProcessTemplate("RepoManager_Property.cstemp", entityName, projectNamePrefix);
 
-            // a. AppDbContext (DbSet Ekleme)
             _fileUpdater.InsertContent(dbContextPath, dbSetLine, "protected override void OnModelCreating", true);
 
-            // b. IRepositoryManager (Property Ekleme)
             _fileUpdater.InsertContent(iRepositoryManagerPath, iRepoManagerProp, "Task SaveAsync()", true);
 
-            // c. RepositoryManager (Field, Ctor, Property Ekleme)
             _fileUpdater.InsertContent(repositoryManagerPath, repoManagerField, "private readonly AppDbContext", false);
             _fileUpdater.InsertContent(repositoryManagerPath, repoManagerCtor, "public RepositoryManager(AppDbContext context)", false);
             _fileUpdater.InsertContent(repositoryManagerPath, repoManagerProp, "public async Task SaveAsync()", true);
 
-            // Adım 4: Sonuç
             MessageBox.Show($"'{projectNamePrefix}' projesi ve '{entityName}' Entity kodları başarıyla oluşturuldu.",
                             "İşlem Tamamlandı", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

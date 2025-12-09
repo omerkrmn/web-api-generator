@@ -9,6 +9,4 @@ namespace ApiGenerator.Constants;
 public static class AppConsts
 {
     public const string PROJECT_NAME = "CodeGenerator";
-    
-
 }

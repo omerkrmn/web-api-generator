@@ -15,16 +15,15 @@ public class ControllerGenerator
         var entityName = entity.EntityName;
         var pluralEntityName = entityName + "s";
         var entityType = entityName;
-        var repositoryInterface = $"I{entityName}Repository"; // Örn: IProductRepository
-        var repositoryVariableName = $"_{entityName.ToLower()}Repository"; // Örn: _productRepository
-        var creationDto = $"Create{entityName}Dto"; // Oluşturma için DTO adı (varsayım)
-        var returnDto = $"{entityName}Dto"; // Dönüş için DTO adı (varsayım)
+        var repositoryInterface = $"I{entityName}Repository"; 
+        var repositoryVariableName = $"_{entityName.ToLower()}Repository"; 
+        var creationDto = $"Create{entityName}Dto"; 
+        var returnDto = $"{entityName}Dto"; 
 
-        // Şablon yapısı
         sb.AppendLine("using Microsoft.AspNetCore.Mvc;");
         sb.AppendLine("using Microsoft.EntityFrameworkCore;");
-        sb.AppendLine($"using {projectName}.Domain.Entities;"); // Entity'i kullanmak için
-        sb.AppendLine($"using {projectName}.Domain.Repositories;"); // Repository'i kullanmak için
+        sb.AppendLine($"using {projectName}.Domain.Entities;"); 
+        sb.AppendLine($"using {projectName}.Domain.Repositories;"); 
         sb.AppendLine();
         sb.AppendLine($"namespace {projectName}.Api.Controllers");
         sb.AppendLine("{");
@@ -35,14 +34,12 @@ public class ControllerGenerator
         sb.AppendLine($"        private readonly {repositoryInterface} {repositoryVariableName};");
         sb.AppendLine();
 
-        // Constructor (Repository Enjeksiyonu)
         sb.AppendLine($"        public {pluralEntityName}Controller({repositoryInterface} {repositoryVariableName.Substring(1)})");
         sb.AppendLine("        {");
         sb.AppendLine($"            {repositoryVariableName} = {repositoryVariableName.Substring(1)};");
         sb.AppendLine("        }");
         sb.AppendLine();
 
-        // GET ALL Metodu
         sb.AppendLine("        [HttpGet]");
         sb.AppendLine("        public async Task<IActionResult> GetAll()");
         sb.AppendLine("        {");
@@ -53,7 +50,6 @@ public class ControllerGenerator
         sb.AppendLine("        }");
         sb.AppendLine();
 
-        // GET BY ID Metodu
         sb.AppendLine("        [HttpGet(\"{id}\")]");
         sb.AppendLine("        public async Task<IActionResult> GetById(int id)");
         sb.AppendLine("        {");
@@ -66,16 +62,14 @@ public class ControllerGenerator
         sb.AppendLine("        }");
         sb.AppendLine();
 
-        // POST (CREATE) Metodu
         sb.AppendLine("        [HttpPost]");
-        sb.AppendLine($"        public async Task<IActionResult> Create({entityType} model)"); // DTO yerine direkt Entity'i kabul etme varsayımı
+        sb.AppendLine($"        public async Task<IActionResult> Create({entityType} model)"); 
         sb.AppendLine("        {");
         sb.AppendLine($"            var newEntity = await {repositoryVariableName}.AddAsync(model);");
         sb.AppendLine($"            return CreatedAtAction(nameof(GetById), new {{ id = newEntity.Id }}, newEntity);");
         sb.AppendLine("        }");
         sb.AppendLine();
 
-        // PUT (UPDATE) Metodu
         sb.AppendLine("        [HttpPut(\"{id}\")]");
         sb.AppendLine($"        public async Task<IActionResult> Update(int id, {entityType} model)");
         sb.AppendLine("        {");
@@ -88,7 +82,6 @@ public class ControllerGenerator
         sb.AppendLine("        }");
         sb.AppendLine();
 
-        // DELETE Metodu
         sb.AppendLine("        [HttpDelete(\"{id}\")]");
         sb.AppendLine("        public async Task<IActionResult> Delete(int id)");
         sb.AppendLine("        {");

@@ -18,7 +18,8 @@ namespace ApiGenerator.Managers
 
             if (!File.Exists(templatePath))
             {
-                throw new FileNotFoundException($"Şablon dosyası bulunamadı! Lütfen '{templateFileName}' dosyasının şu dizinde olduğundan emin olun:\n{templatePath}", templatePath);
+                throw new FileNotFoundException($"Şablon dosyası bulunamadı! Lütfen '{templateFileName}' dosyasının şu dizinde olduğundan emin olun:" +
+                    $"\n{templatePath}", templatePath);
             }
 
             string template = File.ReadAllText(templatePath);

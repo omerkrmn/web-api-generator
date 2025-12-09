@@ -42,12 +42,10 @@ public class ProjectFileManager
 
     public void CreateApiProject(string solutionPath, string projectNamePrefix)
     {
-        // API projesi ve 3 Class Library projesi oluşturulur
         RunDotNetCommand($"new webapi -n {projectNamePrefix}.Api", solutionPath);
         RunDotNetCommand($"new classlib -n {projectNamePrefix}.Domain", solutionPath);
         RunDotNetCommand($"new classlib -n {projectNamePrefix}.Infrastructure", solutionPath);
 
-        // Solution'a projeleri ekle
         RunDotNetCommand($"sln add {projectNamePrefix}.Api/{projectNamePrefix}.Api.csproj", solutionPath);
         RunDotNetCommand($"sln add {projectNamePrefix}.Domain/{projectNamePrefix}.Domain.csproj", solutionPath);
         RunDotNetCommand($"sln add {projectNamePrefix}.Infrastructure/{projectNamePrefix}.Infrastructure.csproj", solutionPath);
