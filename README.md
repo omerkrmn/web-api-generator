@@ -6,12 +6,12 @@ Bu proje aşağıdaki ekip üyeleri tarafından geliştirilmiştir:
 | Ad Soyad | Öğrenci No | Şube |
 | :--- | :--- | :--- |
 | **Ömer Karaman** | 235260301 | İkinci Öğretim |
-| **Sueda Onur** | 230260145 | Birinci Öğretim |
+| **Sueda Onur** | 230260145 | Örgün Öğretim |
 
 ---
 
 ## 🚀 Proje Hakkında
-Bu proje, **Bilgisayar Mühendisliği Tasarım Dersi** kapsamında geliştirilmiştir. Temel amacı, .NET tabanlı Web API geliştirme süreçlerinde tekrar eden ve zaman alan mimari yapıların kurulumunu otonom hale getirmektir.
+Bu proje, **BMÜ401-Bilgisayar Mühendisliği Tasarım Dersi** kapsamında geliştirilmiştir. Temel amacı, .NET tabanlı Web API geliştirme süreçlerinde tekrar eden ve zaman alan mimari yapıların kurulumunu otonom hale getirmektir.
 
 ### 🛠 Problemin Tanımı
 API geliştirme sürecinde; Entity yapılarından ve iş mantığından bağımsız olarak kurulan **Global Exception Handler, Generic Repository Pattern, Dependency Injection** gibi yapılar her projede manuel olarak yapılandırılmaktadır. Bu durum geliştiriciler için ciddi bir zaman kaybına yol açar. **Web API Generator**, bu süreçleri otomatikleştirerek yazılımcının doğrudan iş mantığına (business logic) odaklanmasını sağlar.
@@ -40,4 +40,4 @@ Proje, kullanıcıdan alınan veriler doğrultusunda aşağıdaki bileşenleri o
 * **C#**
 
 ---
-© 2024 - Bilgisayar Mühendisliği Tasarım Dersi Projesi
+© 2024 - BMÜ401 Bilgisayar Mühendisliği Tasarım Dersi Projesi
