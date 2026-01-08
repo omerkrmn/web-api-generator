@@ -31,12 +31,12 @@
             btnAddProperty = new Button();
             btnGenerate = new Button();
             pnlProperties = new Panel();
-            txtEntityName = new TextBox();
+            txtProjectName = new TextBox();
             txtProjectPath = new TextBox();
             btnSelectFolder = new Button();
             label1 = new Label();
             label2 = new Label();
-            textBox1 = new TextBox();
+            txtEntityName = new TextBox();
             label3 = new Label();
             SuspendLayout();
             // 
@@ -66,12 +66,12 @@
             pnlProperties.Size = new Size(325, 237);
             pnlProperties.TabIndex = 2;
             // 
-            // txtEntityName
+            // txtProjectName
             // 
-            txtEntityName.Location = new Point(78, 12);
-            txtEntityName.Name = "txtEntityName";
-            txtEntityName.Size = new Size(135, 23);
-            txtEntityName.TabIndex = 3;
+            txtProjectName.Location = new Point(78, 12);
+            txtProjectName.Name = "txtProjectName";
+            txtProjectName.Size = new Size(135, 23);
+            txtProjectName.TabIndex = 3;
             // 
             // txtProjectPath
             // 
@@ -108,12 +108,12 @@
             label2.TabIndex = 7;
             label2.Text = "Proje Yolu";
             // 
-            // textBox1
+            // txtEntityName
             // 
-            textBox1.Location = new Point(78, 77);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(135, 23);
-            textBox1.TabIndex = 8;
+            txtEntityName.Location = new Point(78, 77);
+            txtEntityName.Name = "txtEntityName";
+            txtEntityName.Size = new Size(135, 23);
+            txtEntityName.TabIndex = 8;
             // 
             // label3
             // 
@@ -130,12 +130,12 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(346, 450);
             Controls.Add(label3);
-            Controls.Add(textBox1);
+            Controls.Add(txtEntityName);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(btnSelectFolder);
             Controls.Add(txtProjectPath);
-            Controls.Add(txtEntityName);
+            Controls.Add(txtProjectName);
             Controls.Add(pnlProperties);
             Controls.Add(btnGenerate);
             Controls.Add(btnAddProperty);
@@ -150,12 +150,12 @@
         private Button btnAddProperty;
         private Button btnGenerate;
         private Panel pnlProperties;
-        private TextBox txtEntityName;
+        private TextBox txtProjectName;
         private TextBox txtProjectPath;
         private Button btnSelectFolder;
         private Label label1;
         private Label label2;
-        private TextBox textBox1;
+        private TextBox txtEntityName;
         private Label label3;
     }
 }

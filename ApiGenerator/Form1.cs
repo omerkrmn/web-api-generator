@@ -125,7 +125,7 @@ public partial class Form1 : Form
 
     private async void btnGenerate_Click(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(txtEntityName.Text) || string.IsNullOrWhiteSpace(txtProjectPath.Text) || !Directory.Exists(txtProjectPath.Text))
+        if (string.IsNullOrWhiteSpace(txtProjectName.Text) || string.IsNullOrWhiteSpace(txtProjectPath.Text) || !Directory.Exists(txtProjectPath.Text))
         {
             MessageBox.Show("Lütfen Entity Adını girin ve geçerli bir Proje Konumu seçin.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
@@ -135,71 +135,28 @@ public partial class Form1 : Form
         {
             var entityDefinition = new EntityDefinition
             {
-                EntityName = txtEntityName.Text.Trim(),
+                EntityName = txtProjectName.Text.Trim(),
                 Properties = CollectPropertyDefinitions()
             };
-
+            //ilk harfi büyük yap
             string entityName = entityDefinition.EntityName.First().ToString().ToUpper() + entityDefinition.EntityName.Substring(1);
+            // proje yolu
             string solutionRootPath = txtProjectPath.Text;
-            string projectNamePrefix = entityName + "Api";
-            string solutionFilePath = Path.Combine(solutionRootPath, projectNamePrefix + ".sln");
-            bool isFirstRun = !File.Exists(solutionFilePath);
-
-            string apiPath = Path.Combine(solutionRootPath, projectNamePrefix + ".Api");
-            string domainPath = Path.Combine(solutionRootPath, projectNamePrefix + ".Domain");
-            string infrastructurePath = Path.Combine(solutionRootPath, projectNamePrefix + ".Infrastructure");
-            string apiCsproj = Path.Combine(apiPath, projectNamePrefix + ".Api.csproj");
-            string domainCsproj = Path.Combine(domainPath, projectNamePrefix + ".Domain.csproj");
-
-            string dbContextPath = Path.Combine(infrastructurePath, "Context", "AppDbContext.cs");
-            string iRepositoryManagerPath = Path.Combine(domainPath, "Repositories", "IRepositoryManager.cs");
-            string repositoryManagerPath = Path.Combine(infrastructurePath, "Repositories", "RepositoryManager.cs");
-
-            if (isFirstRun)
+            //TODO: Proje adını kullanıcıdan al
+            string projectNamePrefix = txtProjectName.Text.ToLower().Contains("api") ? txtProjectName.Text : txtProjectName.Text + "Api";
+            
+            //TODO: 
+            if (Directory.Exists(projectNamePrefix))
             {
-                _projectManager.CreateSolution(solutionRootPath, projectNamePrefix);
-                _projectManager.CreateApiProject(solutionRootPath, projectNamePrefix);
-                _dependencyManager.AddProjectReference(apiCsproj, domainCsproj);
+                
+                Console.WriteLine("Klasör zaten mevcut.");
+            }
+            else
+            {
+                // Klasör yok, projeyi oluşturmaya başla
+                Console.WriteLine("Yeni proje oluşturuluyor...");
             }
 
-        
-            string entityCode = ProcessTemplate("EntityClassTemplate.cstemp", entityName, projectNamePrefix);
-            string entityFilePath = Path.Combine(domainPath, "Entities", entityName + ".cs");
-            Directory.CreateDirectory(Path.GetDirectoryName(entityFilePath));
-            File.WriteAllText(entityFilePath, entityCode);
-
-            string iRepoCode = ProcessTemplate("IEntityRepositoryTemplate.cstemp", entityName, projectNamePrefix);
-            string iRepoFilePath = Path.Combine(domainPath, "Repositories", "I" + entityName + "Repository.cs");
-            Directory.CreateDirectory(Path.GetDirectoryName(iRepoFilePath));
-            File.WriteAllText(iRepoFilePath, iRepoCode);
-
-            string repoCode = ProcessTemplate("EntityRepositoryTemplate.cstemp", entityName, projectNamePrefix);
-            string repoFilePath = Path.Combine(infrastructurePath, "Repositories", entityName + "Repository.cs");
-            Directory.CreateDirectory(Path.GetDirectoryName(repoFilePath));
-            File.WriteAllText(repoFilePath, repoCode);
-
-            string controllerCode = ProcessTemplate("ControllerClassTemplate.cstemp", entityName, projectNamePrefix);
-            string controllerFilePath = Path.Combine(apiPath, "Controllers", entityName + "sController.cs");
-            Directory.CreateDirectory(Path.GetDirectoryName(controllerFilePath));
-            File.WriteAllText(controllerFilePath, controllerCode);
-
-
-            string dbSetLine = $"        public DbSet<{entityName}> {entityName}s {{ get; set; }}";
-            string iRepoManagerProp = _templateProcessor.ProcessTemplate("IRepositoryManager_Property.cstemp", entityName, projectNamePrefix);
-            string repoManagerField = _templateProcessor.ProcessTemplate("RepoManager_Field.cstemp", entityName, projectNamePrefix);
-            string repoManagerCtor = _templateProcessor.ProcessTemplate("RepoManager_Ctor_Assignment.cstemp", entityName, projectNamePrefix);
-            string repoManagerProp = _templateProcessor.ProcessTemplate("RepoManager_Property.cstemp", entityName, projectNamePrefix);
-
-            _fileUpdater.InsertContent(dbContextPath, dbSetLine, "protected override void OnModelCreating", true);
-
-            _fileUpdater.InsertContent(iRepositoryManagerPath, iRepoManagerProp, "Task SaveAsync()", true);
-
-            _fileUpdater.InsertContent(repositoryManagerPath, repoManagerField, "private readonly AppDbContext", false);
-            _fileUpdater.InsertContent(repositoryManagerPath, repoManagerCtor, "public RepositoryManager(AppDbContext context)", false);
-            _fileUpdater.InsertContent(repositoryManagerPath, repoManagerProp, "public async Task SaveAsync()", true);
-
-            MessageBox.Show($"'{projectNamePrefix}' projesi ve '{entityName}' Entity kodları başarıyla oluşturuldu.",
-                            "İşlem Tamamlandı", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
