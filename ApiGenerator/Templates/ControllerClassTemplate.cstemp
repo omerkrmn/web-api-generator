@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using ##PROJECT_NAME##.Domain.Repositories;
-using ##PROJECT_NAME##.Domain.Entities;
+using ##PROJECT_NAME##.Repositories;
+using ##PROJECT_NAME##.Models;
 
-namespace ##PROJECT_NAME##.Api.Controllers
+namespace ##PROJECT_NAME##.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,6 +18,7 @@ namespace ##PROJECT_NAME##.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            // RepositoryManager üzerinden ilgili Entity repository'sine eriþim
             var list = await _repositoryManager.##ENTITY_NAME##.GetAllAsync();
             return Ok(list);
         }
@@ -31,8 +32,10 @@ namespace ##PROJECT_NAME##.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(##ENTITY_NAME## entity)
+        public async Task<IActionResult> Create([FromBody] ##ENTITY_NAME## entity)
         {
+            if (entity == null) return BadRequest();
+
             await _repositoryManager.##ENTITY_NAME##.AddAsync(entity);
             await _repositoryManager.SaveAsync();
             
@@ -40,9 +43,9 @@ namespace ##PROJECT_NAME##.Api.Controllers
         }
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ##ENTITY_NAME## entity)
+        public async Task<IActionResult> Update(int id, [FromBody] ##ENTITY_NAME## entity)
         {
-            if (id != entity.Id) return BadRequest();
+            if (entity == null || id != entity.Id) return BadRequest();
             
             _repositoryManager.##ENTITY_NAME##.Update(entity); 
             await _repositoryManager.SaveAsync(); 
@@ -56,7 +59,7 @@ namespace ##PROJECT_NAME##.Api.Controllers
             var entity = await _repositoryManager.##ENTITY_NAME##.GetByIdAsync(id);
             if (entity == null) return NotFound();
             
-            _repositoryManager.##ENTITY_NAME##.Delete(entity);
+            _repositoryManager.##ENTITY_NAME##.Remove(entity); // GenericRepository'deki isimlendirmeye (Remove) uygun hale getirildi
             await _repositoryManager.SaveAsync();
             
             return NoContent();

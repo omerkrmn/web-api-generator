@@ -38,6 +38,8 @@
             label2 = new Label();
             txtEntityName = new TextBox();
             label3 = new Label();
+            chkIncludeSwagger = new CheckBox();
+            chkAutoMigrate = new CheckBox();
             SuspendLayout();
             // 
             // btnAddProperty
@@ -124,11 +126,33 @@
             label3.TabIndex = 9;
             label3.Text = "Entity Adı";
             // 
+            // chkIncludeSwagger
+            // 
+            chkIncludeSwagger.AutoSize = true;
+            chkIncludeSwagger.Location = new Point(219, 12);
+            chkIncludeSwagger.Name = "chkIncludeSwagger";
+            chkIncludeSwagger.Size = new Size(95, 19);
+            chkIncludeSwagger.TabIndex = 10;
+            chkIncludeSwagger.Text = "Swagger Ekle";
+            chkIncludeSwagger.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoMigrate
+            // 
+            chkAutoMigrate.AutoSize = true;
+            chkAutoMigrate.Location = new Point(373, 18);
+            chkAutoMigrate.Name = "chkAutoMigrate";
+            chkAutoMigrate.Size = new Size(120, 19);
+            chkAutoMigrate.TabIndex = 11;
+            chkAutoMigrate.Text = "Otomatik Migrate";
+            chkAutoMigrate.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(346, 450);
+            ClientSize = new Size(520, 444);
+            Controls.Add(chkAutoMigrate);
+            Controls.Add(chkIncludeSwagger);
             Controls.Add(label3);
             Controls.Add(txtEntityName);
             Controls.Add(label2);
@@ -157,5 +181,7 @@
         private Label label2;
         private TextBox txtEntityName;
         private Label label3;
+        private CheckBox chkIncludeSwagger;
+        private CheckBox chkAutoMigrate;
     }
 }

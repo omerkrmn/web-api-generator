@@ -1,0 +1,20 @@
+using ##PROJECT_NAME##.Data;
+
+namespace ##PROJECT_NAME##.Repositories
+{
+    public class RepositoryManager : IRepositoryManager
+    {
+        private readonly AppDbContext _context;
+        private readonly Lazy<I##ENTITY_NAME##Repository> _##ENTITY_NAME_LOWER##Repository;
+
+        public RepositoryManager(AppDbContext context)
+        {
+            _context = context;
+            _##ENTITY_NAME_LOWER##Repository = new Lazy<I##ENTITY_NAME##Repository>(() => new ##ENTITY_NAME##Repository(_context));
+        }
+
+        public I##ENTITY_NAME##Repository ##ENTITY_NAME## => _##ENTITY_NAME_LOWER##Repository.Value;
+
+        public async Task SaveAsync() => await _context.SaveChangesAsync();
+    }
+}

@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Templates\AppDbContextTemplate.cstemp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\AppSettingsTemplate.cstemp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\ControllerClassTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -22,28 +28,27 @@
     <None Update="Templates\EntityRepositoryTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Templates\GenericRepositoryTemplate.cstemp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\IEntityRepositoryTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\IRepositoryManager_Property.cstemp">
+    <None Update="Templates\IGenericRepositoryTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\RepoManager_Ctor_Assignment.cstemp">
+    <None Update="Templates\IRepositoryManagerTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\RepoManager_Field.cstemp">
+    <None Update="Templates\LaunchSettingsTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\RepoManager_Property.cstemp">
+    <None Update="Templates\ProgramTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Templates\RepositoryManagerUpdateTemplate.cstemp">
+    <None Update="Templates\RepositoryManagerTemplate.cstemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

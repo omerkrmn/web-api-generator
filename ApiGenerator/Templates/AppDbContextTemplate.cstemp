@@ -1,0 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using ##PROJECT_NAME##.Models;
+
+namespace ##PROJECT_NAME##.Data
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        public DbSet<##ENTITY_NAME##> ##ENTITY_NAME##s { get; set; }
+    }
+}

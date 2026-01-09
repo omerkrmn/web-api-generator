@@ -1,10 +1,12 @@
 using System;
-using ##PROJECT_NAME##.Domain.Common;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace ##PROJECT_NAME##.Domain.Entities
+namespace ##PROJECT_NAME##.Models
 {
-    public class ##ENTITY_NAME## : BaseEntity
+    public class ##ENTITY_NAME##
     {
+        // Entity özellikleri (Property listesi buraya enjekte edilecek)
         ##PROPERTIES##
     }
 }

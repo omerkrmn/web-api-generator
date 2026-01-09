@@ -1,13 +1,11 @@
 ﻿using ApiGenerator.Common;
+using ApiGenerator.Constants;
 using ApiGenerator.InputModels;
-using ApiGenerator.Managers;
 using ApiGenerator.Services;
-using ApiGenerator.Utilities;
-using System.Text;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Drawing;
-using ApiGenerator.Constants; 
+using System.Text;
 
 namespace ApiGenerator;
 
@@ -16,12 +14,6 @@ public partial class Form1 : Form
     private List<Tuple<ComboBox, TextBox>> propertyControls = new List<Tuple<ComboBox, TextBox>>();
     private int yLocation = 10;
 
-    private readonly TemplateProcessor _templateProcessor = new TemplateProcessor();
-    private readonly FileUpdater _fileUpdater = new FileUpdater();
-    private readonly ProjectFileManager _projectManager = new ProjectFileManager();
-    private readonly DependencyManager _dependencyManager = new DependencyManager();
-    private readonly EntityCodeGenerator _entityCodeGenerator = new EntityCodeGenerator();
-    private readonly ControllerGenerator _controllerGenerator = new ControllerGenerator();
 
     public Form1()
     {
@@ -31,34 +23,18 @@ public partial class Form1 : Form
 
     private string GetCSharpTypeName(PrimitiveType type)
     {
-        switch (type)
+        return type switch
         {
-            case PrimitiveType.Int: return "int";
-            case PrimitiveType.Long: return "long";
-            case PrimitiveType.Decimal: return "decimal";
-            case PrimitiveType.Bool: return "bool";
-            case PrimitiveType.String: return "string";
-            case PrimitiveType.DateTime: return "DateTime";
-            default: return type.ToString();
-        }
+            PrimitiveType.Int => "int",
+            PrimitiveType.Long => "long",
+            PrimitiveType.Decimal => "decimal",
+            PrimitiveType.Bool => "bool",
+            PrimitiveType.String => "string",
+            PrimitiveType.DateTime => "DateTime",
+            _ => type.ToString()
+        };
     }
-    private string ProcessTemplate(string templateName, string entityName, string projectName)
-    {
-        string template = _templateProcessor.ProcessTemplate(templateName, entityName, projectName);
 
-        if (templateName == "EntityClassTemplate.cstemp")
-        {
-            var properties = CollectPropertyDefinitions();
-            var propertiesCode = new StringBuilder();
-            foreach (var prop in properties)
-            {
-                string cSharpType = GetCSharpTypeName(prop.Type);
-                propertiesCode.AppendLine($"        public {cSharpType} {prop.Name} {{ get; set; }}");
-            }
-            template = template.Replace("##PROPERTIES##", propertiesCode.ToString());
-        }
-        return template;
-    }
 
     private List<PropertyDefinition> CollectPropertyDefinitions()
     {
@@ -122,45 +98,129 @@ public partial class Form1 : Form
         AddPropertyRow();
     }
 
-
-    private async void btnGenerate_Click(object sender, EventArgs e)
+    private void btnGenerate_Click(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(txtProjectName.Text) || string.IsNullOrWhiteSpace(txtProjectPath.Text) || !Directory.Exists(txtProjectPath.Text))
+        if (string.IsNullOrWhiteSpace(txtProjectName.Text) ||
+            string.IsNullOrWhiteSpace(txtProjectPath.Text) ||
+            string.IsNullOrWhiteSpace(txtEntityName.Text))
         {
-            MessageBox.Show("Lütfen Entity Adını girin ve geçerli bir Proje Konumu seçin.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Lütfen tüm alanları doldurun.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         try
         {
-            var entityDefinition = new EntityDefinition
+            string projectName = txtProjectName.Text.Trim();
+            string projectRootPath = Path.Combine(txtProjectPath.Text, projectName);
+            string entityName = txtEntityName.Text.Trim();
+            entityName = char.ToUpper(entityName[0]) + entityName.Substring(1);
+            bool isSwaggerSelected = chkIncludeSwagger.Checked;
+
+            if (!Directory.Exists(projectRootPath))
             {
-                EntityName = txtProjectName.Text.Trim(),
-                Properties = CollectPropertyDefinitions()
-            };
-            //ilk harfi büyük yap
-            string entityName = entityDefinition.EntityName.First().ToString().ToUpper() + entityDefinition.EntityName.Substring(1);
-            // proje yolu
-            string solutionRootPath = txtProjectPath.Text;
-            //TODO: Proje adını kullanıcıdan al
-            string projectNamePrefix = txtProjectName.Text.ToLower().Contains("api") ? txtProjectName.Text : txtProjectName.Text + "Api";
-            
-            //TODO: 
-            if (Directory.Exists(projectNamePrefix))
-            {
-                
-                Console.WriteLine("Klasör zaten mevcut.");
+                Directory.CreateDirectory(projectRootPath);
             }
             else
             {
-                // Klasör yok, projeyi oluşturmaya başla
-                Console.WriteLine("Yeni proje oluşturuluyor...");
+                var result = MessageBox.Show("Bu klasör zaten mevcut. Üzerine yazılsın mı?", "Onay", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No) return;
             }
 
+            var cliService = new CliService(projectRootPath, projectName);
+            cliService.InitializeProject(includeSwagger: isSwaggerSelected);
+
+            string templateDir = Path.Combine(Application.StartupPath, "Templates");
+            var templateService = new TemplateService(templateDir);
+
+            var rawProperties = CollectPropertyDefinitions();
+            var propertyList = rawProperties.Select(p => (GetCSharpTypeName(p.Type), p.Name)).ToList();
+            string propsCode = templateService.BuildPropertiesCode(propertyList);
+
+            var replacements = new Dictionary<string, string>
+         {
+             { "##PROJECT_NAME##", projectName },
+             { "##ENTITY_NAME##", entityName },
+             { "##PROPERTIES##", propsCode },
+             { "##ENTITY_NAME_LOWER##", entityName.ToLower() }
+         };
+
+            if (isSwaggerSelected)
+            {
+                replacements.Add("##SWAGGER_SERVICES##", "builder.Services.AddEndpointsApiExplorer();\r\nbuilder.Services.AddSwaggerGen();");
+
+                // Başına yorum satırı eklemiyoruz, direkt kodu blok olarak gönderiyoruz
+                string middleware = "if (app.Environment.IsDevelopment())\r\n" +
+                                    "{\r\n" +
+                                    "    app.UseSwagger();\r\n" +
+                                    "    app.UseSwaggerUI();\r\n" +
+                                    "}";
+                replacements.Add("##SWAGGER_MIDDLEWARE##", middleware);
+            }
+            else
+            {
+                replacements.Add("##SWAGGER_SERVICES##", "");
+                replacements.Add("##SWAGGER_MIDDLEWARE##", "");
+            }
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Models", $"{entityName}.cs"),
+                templateService.GenerateContent(TemplateType.Entity, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Data", "AppDbContext.cs"),
+                templateService.GenerateContent(TemplateType.DbContext, replacements));
+
+            // Properties klasörünü oluştur (yoksa launchSettings yazılamaz)
+            string propertiesPath = Path.Combine(projectRootPath, "Properties");
+            if (!Directory.Exists(propertiesPath)) Directory.CreateDirectory(propertiesPath);
+
+            // launchSettings.json dosyasını yaz
+            File.WriteAllText(Path.Combine(propertiesPath, "launchSettings.json"),
+                templateService.GenerateContent(TemplateType.LaunchSettings, replacements));
+
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Repositories", "IGenericRepository.cs"),
+                templateService.GenerateContent(TemplateType.IGenericRepository, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Repositories", "GenericRepository.cs"),
+                templateService.GenerateContent(TemplateType.GenericRepository, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Repositories", $"I{entityName}Repository.cs"),
+                templateService.GenerateContent(TemplateType.IEntityRepository, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Repositories", $"{entityName}Repository.cs"),
+                templateService.GenerateContent(TemplateType.EntityRepository, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Repositories", "IRepositoryManager.cs"),
+                templateService.GenerateContent(TemplateType.IRepositoryManager, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Repositories", "RepositoryManager.cs"),
+                templateService.GenerateContent(TemplateType.RepositoryManager, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Controllers", $"{entityName}sController.cs"),
+                templateService.GenerateContent(TemplateType.Controller, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "Program.cs"),
+                templateService.GenerateContent(TemplateType.Program, replacements));
+
+            File.WriteAllText(Path.Combine(projectRootPath, "appsettings.json"),
+                templateService.GenerateContent(TemplateType.AppSettings, replacements));
+
+            if (chkAutoMigrate.Checked)
+            {
+                Cursor = Cursors.WaitCursor; 
+                cliService.ExecuteMigrations();
+                Cursor = Cursors.Default;
+            }
+
+            var runResult = MessageBox.Show("Proje ve Veritabanı hazır! Başlatılsın mı?", "Başarılı", MessageBoxButtons.YesNo);
+            if (runResult == DialogResult.Yes)
+            {
+                cliService.RunProject();
+            }
+            System.Diagnostics.Process.Start("explorer.exe", projectRootPath);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Kritik Hata Oluştu:\n{ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Hata: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

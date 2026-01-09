@@ -1,0 +1,8 @@
+namespace ##PROJECT_NAME##.Repositories
+{
+    public interface IRepositoryManager
+    {
+        I##ENTITY_NAME##Repository ##ENTITY_NAME## { get; }
+        Task SaveAsync();
+    }
+}

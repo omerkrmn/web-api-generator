@@ -1,2 +1,0 @@
-// Infrastructure/Repositories/IRepositoryManager.cs dosyasýna eklenecek
-I##ENTITY_NAME##Repository ##ENTITY_NAME## { get; }

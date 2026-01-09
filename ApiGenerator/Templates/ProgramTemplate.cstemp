@@ -1,0 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using ##PROJECT_NAME##.Data;
+using ##PROJECT_NAME##.Repositories;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// DbContext ve RepositoryManager Kaydý
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+builder.Services.AddControllers();
+
+// ##SWAGGER_SERVICES##
+
+var app = builder.Build();
+
+// ##SWAGGER_MIDDLEWARE##
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();

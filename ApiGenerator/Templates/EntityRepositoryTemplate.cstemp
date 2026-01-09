@@ -1,16 +1,18 @@
-using ##PROJECT_NAME##.Domain.Entities;
-using ##PROJECT_NAME##.Domain.Repositories;
-using ##PROJECT_NAME##.Infrastructure.Context;
+using ##PROJECT_NAME##.Models;
+using ##PROJECT_NAME##.Repositories;
+using ##PROJECT_NAME##.Data;
 
-namespace ##PROJECT_NAME##.Infrastructure.Repositories
+namespace ##PROJECT_NAME##.Repositories
 {
-    // GenericRepository'yi miras alýr ve I##ENTITY_NAME##Repository arayüzünü uygular.
+    /// <summary>
+    /// GenericRepository'yi miras alýr ve I##ENTITY_NAME##Repository arayüzünü uygular.
+    /// </summary>
     public class ##ENTITY_NAME##Repository : GenericRepository<##ENTITY_NAME##>, I##ENTITY_NAME##Repository
     {
         public ##ENTITY_NAME##Repository(AppDbContext context) : base(context)
         {
         }
         
-        // Entity'ye özgü metot implementasyonlarý buraya gelir.
+        // Bu Entity'ye özgü (Örn: GetByActiveStatus) metot implementasyonlarý buraya eklenebilir.
     }
 }
