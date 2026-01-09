@@ -148,7 +148,6 @@ public partial class Form1 : Form
             {
                 replacements.Add("##SWAGGER_SERVICES##", "builder.Services.AddEndpointsApiExplorer();\r\nbuilder.Services.AddSwaggerGen();");
 
-                // Başına yorum satırı eklemiyoruz, direkt kodu blok olarak gönderiyoruz
                 string middleware = "if (app.Environment.IsDevelopment())\r\n" +
                                     "{\r\n" +
                                     "    app.UseSwagger();\r\n" +
@@ -168,11 +167,9 @@ public partial class Form1 : Form
             File.WriteAllText(Path.Combine(projectRootPath, "Data", "AppDbContext.cs"),
                 templateService.GenerateContent(TemplateType.DbContext, replacements));
 
-            // Properties klasörünü oluştur (yoksa launchSettings yazılamaz)
             string propertiesPath = Path.Combine(projectRootPath, "Properties");
             if (!Directory.Exists(propertiesPath)) Directory.CreateDirectory(propertiesPath);
 
-            // launchSettings.json dosyasını yaz
             File.WriteAllText(Path.Combine(propertiesPath, "launchSettings.json"),
                 templateService.GenerateContent(TemplateType.LaunchSettings, replacements));
 
@@ -206,7 +203,7 @@ public partial class Form1 : Form
 
             if (chkAutoMigrate.Checked)
             {
-                Cursor = Cursors.WaitCursor; 
+                Cursor = Cursors.WaitCursor;
                 cliService.ExecuteMigrations();
                 Cursor = Cursors.Default;
             }
@@ -222,5 +219,10 @@ public partial class Form1 : Form
         {
             MessageBox.Show($"Hata: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+
+    private void chkIncludeSwagger_CheckedChanged(object sender, EventArgs e)
+    {
+
     }
 }

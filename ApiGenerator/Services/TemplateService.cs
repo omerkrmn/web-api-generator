@@ -58,7 +58,7 @@ public enum TemplateType
     RepositoryManager,
     Program,
     AppSettings,
-    LaunchSettings // Yeni eklendi
+    LaunchSettings 
 }
 
 public static class TemplateTypeExtensions
@@ -81,7 +81,7 @@ public static class TemplateTypeExtensions
             TemplateType.DbContext => "AppDbContextTemplate.cstemp",
             TemplateType.Program => "ProgramTemplate.cstemp",
             TemplateType.AppSettings => "AppSettingsTemplate.cstemp",
-            TemplateType.LaunchSettings => "LaunchSettingsTemplate.cstemp", // Yeni eklendi
+            TemplateType.LaunchSettings => "LaunchSettingsTemplate.cstemp", 
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
